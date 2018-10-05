@@ -15,6 +15,7 @@ GET         /user/get             controllers.UserController.getUser(id: Integer
 
 
 GET         /user/edit/:id        controllers.UserController.showEditUserForm(id: Integer)
+POST        /user/edit            controllers.UserController.editUser()
 
 
 

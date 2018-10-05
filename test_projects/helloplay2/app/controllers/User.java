@@ -2,6 +2,7 @@ package controllers;
 
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
+import validation.CreateUserCheck;
 
 @Constraints.Validate
 public class User implements Constraints.Validatable<ValidationError> {
@@ -18,7 +19,7 @@ public class User implements Constraints.Validatable<ValidationError> {
     @Constraints.Email
     private String email;
 
-    @Constraints.Required
+    @Constraints.Required(groups = CreateUserCheck.class)
     @Constraints.MinLength(4)
     private String password;
 
