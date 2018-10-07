@@ -1,6 +1,6 @@
 @(form: Form[User])
 
-@main("User") {
+@main("Edit User") {
 
     @if(form.hasGlobalErrors) {
         <p class="error">
@@ -17,7 +17,7 @@
         @helper.inputText(form("age"))
         @helper.inputPassword(form("password"))
 
-        <input type="hidden" name="userId" value="@form("userId").value()">
+        <input type="hidden" name="userId" value="@form("userId").getValue.get()">
 
         <button type="submit">Edit User</button>
     }

@@ -5,21 +5,18 @@
 GET         /                     controllers.UserController.home()
 
 GET         /users                controllers.UserController.getUsers()
+GET         /user/:id             controllers.UserController.getUser(id: Integer)
 
 
 GET         /user/create          controllers.UserController.showCreateUserForm()
 POST        /user/create          controllers.UserController.createUser()
 
-GET         /user/:id             controllers.UserController.getUser(id: Integer)
-GET         /user/get             controllers.UserController.getUser(id: Integer)
-
-
 GET         /user/edit/:id        controllers.UserController.showEditUserForm(id: Integer)
-POST        /user/edit            controllers.UserController.editUser()
+PUT        /user/edit             controllers.UserController.editUser()
 
 
 
-POST        /postTest             controllers.UserController.postTest(id:Integer?=0)
+#GET         /user/get             controllers.UserController.getUser(id: Integer)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
+#GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)

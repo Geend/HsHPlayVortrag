@@ -10,10 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * This controller contains an action to handle HTTP requests
- * to the application's home page.
- */
+
 public class UserController extends Controller {
 
 
@@ -22,48 +19,27 @@ public class UserController extends Controller {
 
     private List<User> users = new ArrayList<>();
 
+    private Optional<User> findUser(Integer userId) {
+        return users.stream().filter(u -> u.getUserId().equals(userId)).findFirst();
+    }
+
+
     @Inject
     public UserController(FormFactory formFactory) {
         this.userForm = formFactory.form(User.class);
 
         User testUser = new User();
         testUser.setUserId(0);
-        testUser.setUsername("test");
+        testUser.setUsername("testUser");
         testUser.setPassword("1234");
         testUser.setAge(22);
         testUser.setEmail("mail@example.org");
         users.add(testUser);
     }
 
-    public Result home(){
+    public Result home() {
         return redirect(controllers.routes.UserController.getUsers());
     }
-
-    public Result postTest(Integer id) {
-        return ok("id ist " + id);
-    }
-
-    public Result showCreateUserForm() {
-        return ok(views.html.create_user.render(userForm));
-    }
-
-
-
-    public Result showEditUserForm(Integer userId){
-
-        Optional<User> user =  users.stream().filter(u -> u.getUserId().equals(userId)).findFirst();
-
-        if(user.isPresent()) {
-
-                Form<User> filledForm = userForm.fill(user.get());
-            return ok(views.html.edit_user.render(filledForm));
-        }
-
-        else{
-            return badRequest("user does not exist");
-        }
-    }
-
 
 
     public Result getUsers() {
@@ -71,14 +47,21 @@ public class UserController extends Controller {
     }
 
     public Result getUser(Integer userId) {
-        //TODO: search user
-        if (userId != 0) {
-            return ok("userID: " + userId);
-        } else
-            return ok(views.html.create_user.render(userForm));
+        Optional<User> user = findUser(userId);
 
+        if (user.isPresent()) {
+            return ok(user.get().toString());
+        } else {
+            return badRequest("user does not exist");
+        }
 
     }
+
+
+    public Result showCreateUserForm() {
+        return ok(views.html.create_user.render(userForm));
+    }
+
 
     public Result createUser() {
         Form<User> boundForm = userForm.bindFromRequest("username", "password", "email", "age");
@@ -91,7 +74,21 @@ public class UserController extends Controller {
             user.setUserId(users.size());
 
             users.add(user);
-            return ok("New User " + user.getUsername() + " " + user.getPassword());
+            return ok("New User: " + user.toString());
+        }
+    }
+
+
+
+    public Result showEditUserForm(Integer userId) {
+
+        Optional<User> user = findUser(userId);
+
+        if (user.isPresent()) {
+            Form<User> filledForm = userForm.fill(user.get());
+            return ok(views.html.edit_user.render(filledForm));
+        } else {
+            return badRequest("user does not exist");
         }
     }
 
@@ -103,24 +100,24 @@ public class UserController extends Controller {
         if (boundForm.hasErrors()) {
             return badRequest(views.html.edit_user.render(boundForm));
         } else {
+
             User submittedUser = boundForm.get();
-            //Optional<User> storedUser =  users.stream().filter(u -> u.getUserId().equals(userId)).findFirst();
-
-            Optional<User> oldUser = users.stream().filter(u -> u.getUserId() == submittedUser.getUserId()).findFirst();
+            Optional<User> storedUser = findUser(submittedUser.getUserId());
 
 
-            if(oldUser.isPresent()){
-                users.remove(oldUser.get());
+            if (storedUser.isPresent()) {
+                users.remove(storedUser.get());
                 users.add(submittedUser);
-                return ok("Edit User " + submittedUser.getUsername() + " " + submittedUser.getPassword());
+                return ok("Edited User: " + storedUser.toString());
 
-            }
-            else
-            {
+            } else {
                 return badRequest("user does not exist");
             }
-           // users.add(create_user);
         }
     }
+
+
+
+
 
 }
