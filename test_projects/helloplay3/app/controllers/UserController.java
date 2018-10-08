@@ -1,6 +1,8 @@
 package controllers;
 
 
+import controllers.routes;
+import play.Logger;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -12,17 +14,14 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
 public class UserController extends Controller {
 
-    
-    private static List<User> users = new ArrayList<>();
 
-    protected static Optional<User> findUser(Integer userId) {
-        return users.stream().filter(u -> u.getUserId().equals(userId)).findFirst();
-    }
+    private static List<User> users = new ArrayList<>();
 
     private static void createTestUser(){
         User testUser = new User();
@@ -37,7 +36,27 @@ public class UserController extends Controller {
         testUser.setEmails(emails);
         testUser.setAdmin(true);
         users.add(testUser);
+
     }
+
+    protected static Optional<User> findUser(Integer userId) {
+        return users.stream().filter(u -> u.getUserId().equals(userId)).findFirst();
+    }
+
+
+    protected static List<User> findUsersByName(String name) {
+        List<User> storedUsers = users.stream().filter(u -> u.getUsername().equals(name)).collect(Collectors.toList());
+        return storedUsers;
+    }
+
+    protected static List<User> findUsers(String name, String email, Integer age) {
+        List<User> storedNames = users.stream().filter(u -> u.getUsername().equals(name)).collect(Collectors.toList());
+        List<User> storedEmail = storedNames.stream().filter(u -> u.getEmails().get(0).equals(email)).collect(Collectors.toList());
+        List<User> storedAge = storedEmail.stream().filter(u -> u.getAge().equals(age)).collect(Collectors.toList());
+        return storedAge;
+    }
+
+
 
 
     private final Form<User> createFrom;
@@ -124,10 +143,6 @@ public class UserController extends Controller {
         }
     }
 
-    public Result user(User user){
-        return ok(user.getUsername());
-    }
-
     public Result age(AgeRange ageRange){
        List<User> userList = users.stream().filter(u -> u.getAge().compareTo(ageRange.from) >= 0 &&
                 u.getAge().compareTo(ageRange.to) <= 0).collect(Collectors.toList());
@@ -138,6 +153,14 @@ public class UserController extends Controller {
 
     public Result list(List<String> tags) {
         return ok(tags.toString());
+    }
+
+    public Result getUserByAttr(User user) {
+        Logger.info(user.toString());
+        String username = user.getUsername();
+        String email = user.getEmails().get(0);
+        Integer age = user.getAge();
+        return ok(findUsers(username, email, age).toString());
     }
 
 }

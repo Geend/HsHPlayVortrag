@@ -2,6 +2,7 @@ package controllers;
 
 import play.mvc.PathBindable;
 
+import java.util.Map;
 import java.util.Optional;
 
 import play.data.validation.Constraints;
@@ -9,12 +10,13 @@ import play.data.validation.ValidationError;
 import validation.CreateUserCheck;
 import validation.EditUserCheck;
 import validation.LoginUserCheck;
+import play.mvc.QueryStringBindable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Constraints.Validate(groups = {CreateUserCheck.class, EditUserCheck.class})
-public class User implements Constraints.Validatable<List<ValidationError>>, PathBindable<controllers.User> {
+public class User implements Constraints.Validatable<List<ValidationError>>, QueryStringBindable<User> {
 
 
     private Integer userId;
@@ -57,19 +59,31 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Pat
         return errors;
     }
 
+
     @Override
-    public User bind(String key, String id) {
-        // findById meant to be lightweight operation
-        Optional<User> user = UserController.findUser(new Integer(id));
-        if (user == null) {
-            throw new IllegalArgumentException("User with id " + id + " not found");
+    public Optional<User> bind(String key, Map<String, String[]> data) {
+        try {
+            username = new String(data.get("username")[0]);
+            emails = new ArrayList<String>();
+            emails.add(new String(data.get("email")[0]));
+            age = new Integer((data.get("age")[0]));
+            return Optional.of(this);
+
+        } catch (Exception e) { // no parameter match return None
+            return Optional.empty();
         }
-        return user.get();
     }
 
     @Override
     public String unbind(String key) {
-        return String.valueOf(userId);
+        return new StringBuilder()
+                .append("username=")
+                .append(username)
+                .append("&email=")
+                .append(emails)
+                .append("&age=")
+                .append(age)
+                .toString();
     }
 
     @Override
@@ -125,5 +139,6 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Pat
     public void setPassword(String password) {
         this.password = password;
     }
+
 
 }
