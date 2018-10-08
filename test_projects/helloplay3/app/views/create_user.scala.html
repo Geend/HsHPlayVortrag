@@ -2,6 +2,7 @@
 
 @main("Create User") {
 
+
     @if(form.hasGlobalErrors) {
         <p class="error">
         @for(error <- form.globalErrors) {
@@ -9,7 +10,6 @@
         }
         </p>
     }
-
     @helper.form(action = routes.UserController.createUser()){
         @helper.CSRF.formField
         @helper.inputText(form("username"))
