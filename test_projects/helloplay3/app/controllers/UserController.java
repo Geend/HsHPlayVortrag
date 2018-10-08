@@ -5,6 +5,8 @@ import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
+import validation.CreateUserCheck;
+import validation.EditUserCheck;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -15,20 +17,14 @@ import java.util.stream.Collectors;
 
 public class UserController extends Controller {
 
-
-    private final Form<User> userForm;
-
-
+    
     private static List<User> users = new ArrayList<>();
 
     protected static Optional<User> findUser(Integer userId) {
         return users.stream().filter(u -> u.getUserId().equals(userId)).findFirst();
     }
 
-    @Inject
-    public UserController(FormFactory formFactory) {
-        this.userForm = formFactory.form(User.class);
-
+    private static void createTestUser(){
         User testUser = new User();
         testUser.setUserId(0);
         testUser.setUsername("testUser");
@@ -41,6 +37,18 @@ public class UserController extends Controller {
         testUser.setEmails(emails);
         testUser.setAdmin(true);
         users.add(testUser);
+    }
+
+
+    private final Form<User> createFrom;
+    private final Form<User> editForm;
+
+    @Inject
+    public UserController(FormFactory formFactory) {
+        this.createFrom = formFactory.form(User.class, CreateUserCheck.class);
+        this.editForm = formFactory.form(User.class, EditUserCheck.class);
+
+        createTestUser();
     }
 
     public Result home() {
@@ -64,13 +72,13 @@ public class UserController extends Controller {
     }
 
     public Result showCreateUserForm() {
-        return ok(views.html.create_user.render(userForm));
+        return ok(views.html.create_user.render(createFrom));
 
     }
 
     public Result createUser() {
 
-        Form<User> boundForm = userForm.bindFromRequest("username","password","emails","age","admin");
+        Form<User> boundForm = createFrom.bindFromRequest("username","password","emails","age","admin");
 
         if(boundForm.hasErrors()){
             return ok(views.html.create_user.render(boundForm));
@@ -88,14 +96,14 @@ public class UserController extends Controller {
         Optional<User> user = findUser(userId);
 
         if(user.isPresent()){
-            return ok(views.html.edit_user.render(userForm.fill(user.get())));
+            return ok(views.html.edit_user.render(editForm.fill(user.get())));
         }
         return badRequest("user does not exist");
     }
 
     public Result editUser() {
 
-        Form<User> boundForm = userForm.bindFromRequest("userId", "username", "password", "email", "age");
+        Form<User> boundForm = editForm.bindFromRequest("userId", "username", "password", "email", "age");
 
 
         if(boundForm.hasErrors()){

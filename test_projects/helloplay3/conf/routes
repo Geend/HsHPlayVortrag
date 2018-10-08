@@ -15,7 +15,7 @@ POST        /users/create         controllers.UserController.createUser()
 
 
 GET         /user/edit/:id        controllers.UserController.showEditUserForm(id: Integer)
-PUT         /user/edit            controllers.UserController.editUser()
+POST         /user/edit            controllers.UserController.editUser()
 
 GET         /age                  controllers.UserController.age(ageRange: controllers.AgeRange)
 
