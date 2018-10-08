@@ -18,8 +18,7 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Pat
     @Constraints.MaxLength(20)
     private String username;
 
-    @Constraints.Email
-    private String email;
+    private List<String> emails;
 
     @Constraints.Required
     @Constraints.MinLength(3)
@@ -29,12 +28,21 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Pat
     @Constraints.Max(99)
     private Integer age;
 
+    private Boolean admin;
 
     @Override
     public String toString() {
-        return username;
+        return username + " " + admin;
     }
 
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -44,12 +52,12 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Pat
         this.userId = userId;
     }
 
-    public String getEmail() {
-        return email;
+    public List<String> getEmails() {
+        return emails;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmails(List<String> emails) {
+        this.emails = emails;
     }
 
     public Integer getAge() {
@@ -80,7 +88,7 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Pat
 
         List<ValidationError> errors = new ArrayList<>();
 
-        if(username.equals("admin"))
+        if(username.equals("admin") && !admin)
            errors.add(new ValidationError("username","username draf nicht admin sein"));
 
         if(password.equals(username))

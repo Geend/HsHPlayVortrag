@@ -13,9 +13,11 @@
     @helper.form(action = routes.UserController.editUser()){
         @helper.CSRF.formField
         @helper.inputText(form("username"))
-        @helper.inputText(form("email"))
-        @helper.inputText(form("age"))
+        @helper.repeat(form("emails"), min = 1) { emailField =>
+
+            @helper.inputText(emailField)}        @helper.inputText(form("age"))
         @helper.inputPassword(form("password"))
+        @helper.checkbox(form("admin"))
 
         <input type="hidden" name="userId" value="@form("userId").getValue.get()">
 
