@@ -2,9 +2,11 @@ package controllers;
 
 import play.mvc.PathBindable;
 
+import java.util.Map;
 import java.util.Optional;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
+import play.mvc.QueryStringBindable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,14 +103,14 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
     public Optional<User> bind(String key, Map<String, String[]> data) {
         try {
             username = new String(data.get("username")[0]);
-            email = new String(data.get("email")[0]);
+            emails = new ArrayList<String>();
+            emails.add(new String(data.get("email")[0]));
             age = new Integer((data.get("age")[0]));
             return Optional.of(this);
 
         } catch (Exception e) { // no parameter match return None
             return Optional.empty();
         }
-        return user.get();
     }
 
     @Override

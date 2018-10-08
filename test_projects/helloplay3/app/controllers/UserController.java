@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -33,7 +34,7 @@ public class UserController extends Controller {
 
     protected static List<User> findUsers(String name, String email, Integer age) {
         List<User> storedNames = users.stream().filter(u -> u.getUsername().equals(name)).collect(Collectors.toList());
-        List<User> storedEmail = storedNames.stream().filter(u -> u.getEmail().equals(email)).collect(Collectors.toList());
+        List<User> storedEmail = storedNames.stream().filter(u -> u.getEmails().get(0).equals(email)).collect(Collectors.toList());
         List<User> storedAge = storedEmail.stream().filter(u -> u.getAge().equals(age)).collect(Collectors.toList());
         return storedAge;
     }
@@ -144,7 +145,7 @@ public class UserController extends Controller {
     public Result getUserByAttr(User user) {
         Logger.info(user.toString());
         String username = user.getUsername();
-        String email = user.getEmail();
+        String email = user.getEmails().get(0);
         Integer age = user.getAge();
         return ok(findUsers(username, email, age).toString());
     }
