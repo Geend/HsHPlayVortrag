@@ -1,0 +1,24 @@
+@(form: Form[User])
+
+@main("Edit User") {
+
+    @if(form.hasGlobalErrors) {
+        <p class="error">
+        @for(error <- form.globalErrors) {
+            <p>@error</p>
+        }
+        </p>
+    }
+
+    @helper.form(action = routes.UserController.editUser()){
+        @helper.CSRF.formField
+        @helper.inputText(form("username"))
+        @helper.inputText(form("email"))
+        @helper.inputText(form("age"))
+        @helper.inputPassword(form("password"))
+
+        <input type="hidden" name="userId" value="@form("userId").getValue.get()">
+
+        <button type="submit">Edit User</button>
+    }
+}

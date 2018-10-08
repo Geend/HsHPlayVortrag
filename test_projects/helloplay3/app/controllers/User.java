@@ -1,10 +1,5 @@
 package controllers;
 
-import play.data.validation.Constraints;
-import play.data.validation.ValidationError;
-import validation.CreateUserCheck;
-
-
 public class User{
 
 
