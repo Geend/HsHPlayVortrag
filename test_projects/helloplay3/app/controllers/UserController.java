@@ -47,7 +47,12 @@ public class UserController extends Controller {
         testUser.setUsername("testUser");
         testUser.setPassword("1234");
         testUser.setAge(22);
-        testUser.setEmail("mail@example.org");
+
+        List<String> emails = new ArrayList<>();
+        emails.add("mail1@example.org");
+        emails.add("mail2@example.org");
+        testUser.setEmails(emails);
+        testUser.setAdmin(true);
         users.add(testUser);
     }
 
@@ -78,7 +83,7 @@ public class UserController extends Controller {
 
     public Result createUser() {
 
-        Form<User> boundForm = userForm.bindFromRequest("username","password","email","age");
+        Form<User> boundForm = userForm.bindFromRequest("username","password","emails","age","admin");
 
         if(boundForm.hasErrors()){
             return ok(views.html.create_user.render(boundForm));
@@ -125,9 +130,11 @@ public class UserController extends Controller {
     }
 
     public Result age(AgeRange ageRange){
-        Optional<User> storedUser = users.stream().filter(u -> u.getAge().compareTo(ageRange.from) >= 0 &&
-                u.getAge().compareTo(ageRange.to) <= 0).findFirst();
-        return ok(storedUser.toString());
+       List<User> userList = users.stream().filter(u -> u.getAge().compareTo(ageRange.from) >= 0 &&
+                u.getAge().compareTo(ageRange.to) <= 0).collect(Collectors.toList());
+
+
+        return ok(userList.toString());
     }
 
     public Result list(List<String> tags) {

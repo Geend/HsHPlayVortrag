@@ -1,17 +1,10 @@
 package controllers;
 
-import play.Logger;
 import play.mvc.PathBindable;
 
-import java.util.Map;
 import java.util.Optional;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import play.mvc.QueryStringBindable;
-import scala.Function1;
-import scala.Option;
-import scala.collection.Seq;
-import scala.util.Either;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +16,9 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
 
     @Constraints.Required
     @Constraints.MaxLength(20)
-    public String username;
+    private String username;
 
-    @Constraints.Email
-    public String email;
+    private List<String> emails;
 
     @Constraints.Required
     @Constraints.MinLength(3)
@@ -34,14 +26,23 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
 
     @Constraints.Min(18)
     @Constraints.Max(99)
-    public Integer age;
+    private Integer age;
 
+    private Boolean admin;
 
     @Override
     public String toString() {
-        return username;
+        return username + " " + admin;
     }
 
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -51,12 +52,12 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
         this.userId = userId;
     }
 
-    public String getEmail() {
-        return email;
+    public List<String> getEmails() {
+        return emails;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmails(List<String> emails) {
+        this.emails = emails;
     }
 
     public Integer getAge() {
@@ -96,10 +97,8 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
         return errors;
     }
 
-
     @Override
     public Optional<User> bind(String key, Map<String, String[]> data) {
-        Logger.info("bind "+ data.toString());
         try {
             username = new String(data.get("username")[0]);
             email = new String(data.get("email")[0]);
@@ -109,6 +108,7 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
         } catch (Exception e) { // no parameter match return None
             return Optional.empty();
         }
+        return user.get();
     }
 
     @Override
@@ -117,7 +117,7 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
                 .append("username=")
                 .append(username)
                 .append("&email=")
-                .append(email)
+                .append(emails)
                 .append("&age=")
                 .append(age)
                 .toString();

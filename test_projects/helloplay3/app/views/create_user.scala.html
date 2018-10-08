@@ -13,9 +13,14 @@
     @helper.form(action = routes.UserController.createUser()){
         @helper.CSRF.formField
         @helper.inputText(form("username"))
-        @helper.inputText(form("email"))
+
+        @helper.repeat(form("emails"), min = 1) { emailField =>
+            @helper.inputText(emailField)
+        }
+
         @helper.inputText(form("age"))
         @helper.inputPassword(form("password"))
+        @helper.checkbox(form("admin"))
 
 
         <button type="submit">Create User</button>
