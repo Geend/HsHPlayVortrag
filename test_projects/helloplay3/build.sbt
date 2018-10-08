@@ -1,4 +1,4 @@
-name := """helloplay3"""
+name := "helloplay3"
 organization := "net.torbenvoltmer"
 
 version := "1.0-SNAPSHOT"

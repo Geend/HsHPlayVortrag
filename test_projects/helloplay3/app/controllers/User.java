@@ -1,6 +1,10 @@
 package controllers;
 
-public class User{
+import play.mvc.PathBindable;
+
+import java.util.Optional;
+
+public class User implements PathBindable<User> {
 
 
     private Integer userId;
@@ -57,7 +61,23 @@ public class User{
     }
 
 
+    @Override
+    public User bind(String key, String id) {
+        // findById meant to be lightweight operation
+        Optional<User> user = UserController.findUser(new Integer(id));
+        if (user == null) {
+            throw new IllegalArgumentException("User with id " + id + " not found");
+        }
+        return user.get();
+    }
 
+    @Override
+    public String unbind(String key) {
+        return String.valueOf(userId);
+    }
 
-
+    @Override
+    public String javascriptUnbind() {
+        return null;
+    }
 }

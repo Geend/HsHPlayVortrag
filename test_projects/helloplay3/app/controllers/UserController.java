@@ -18,12 +18,11 @@ public class UserController extends Controller {
     private final Form<User> userForm;
 
 
-    private List<User> users = new ArrayList<>();
+    private static List<User> users = new ArrayList<>();
 
-    private Optional<User> findUser(Integer userId) {
+    protected static Optional<User> findUser(Integer userId) {
         return users.stream().filter(u -> u.getUserId().equals(userId)).findFirst();
     }
-
 
     @Inject
     public UserController(FormFactory formFactory) {
@@ -57,7 +56,6 @@ public class UserController extends Controller {
         }
 
     }
-
 
     public Result showCreateUserForm() {
         return ok(views.html.create_user.render(userForm));
@@ -112,5 +110,18 @@ public class UserController extends Controller {
         }
     }
 
+    public Result user(User user){
+        return ok(user.getUsername());
+    }
+
+    public Result age(AgeRange ageRange){
+        Optional<User> storedUser = users.stream().filter(u -> u.getAge().compareTo(ageRange.from) >= 0 &&
+                u.getAge().compareTo(ageRange.to) <= 0).findFirst();
+        return ok(storedUser.toString());
+    }
+
+    public Result list(List<String> tags) {
+        return ok(tags.toString());
+    }
 
 }
