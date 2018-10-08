@@ -100,7 +100,7 @@ public class UserController extends Controller {
         Optional<User> storedUser = findUser(changedUser.getUserId());
 
         if(storedUser.isPresent()){
-            users.remove(storedUser);
+            users.remove(storedUser.get());
             users.add(changedUser);
 
             return ok("changed user: " + changedUser.toString());
