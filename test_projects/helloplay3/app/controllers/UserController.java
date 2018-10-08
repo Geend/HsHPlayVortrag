@@ -1,6 +1,7 @@
 package controllers;
 
 
+import play.Logger;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 public class UserController extends Controller {
@@ -22,6 +24,18 @@ public class UserController extends Controller {
 
     protected static Optional<User> findUser(Integer userId) {
         return users.stream().filter(u -> u.getUserId().equals(userId)).findFirst();
+    }
+
+    protected static List<User> findUsersByName(String name) {
+        List<User> storedUsers = users.stream().filter(u -> u.getUsername().equals(name)).collect(Collectors.toList());
+        return storedUsers;
+    }
+
+    protected static List<User> findUsers(String name, String email, Integer age) {
+        List<User> storedNames = users.stream().filter(u -> u.getUsername().equals(name)).collect(Collectors.toList());
+        List<User> storedEmail = storedNames.stream().filter(u -> u.getEmail().equals(email)).collect(Collectors.toList());
+        List<User> storedAge = storedEmail.stream().filter(u -> u.getAge().equals(age)).collect(Collectors.toList());
+        return storedAge;
     }
 
     @Inject
@@ -110,10 +124,6 @@ public class UserController extends Controller {
         }
     }
 
-    public Result user(User user){
-        return ok(user.getUsername());
-    }
-
     public Result age(AgeRange ageRange){
         Optional<User> storedUser = users.stream().filter(u -> u.getAge().compareTo(ageRange.from) >= 0 &&
                 u.getAge().compareTo(ageRange.to) <= 0).findFirst();
@@ -122,6 +132,14 @@ public class UserController extends Controller {
 
     public Result list(List<String> tags) {
         return ok(tags.toString());
+    }
+
+    public Result getUserByAttr(User user) {
+        Logger.info(user.toString());
+        String username = user.getUsername();
+        String email = user.getEmail();
+        Integer age = user.getAge();
+        return ok(findUsers(username, email, age).toString());
     }
 
 }
