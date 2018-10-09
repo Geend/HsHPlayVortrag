@@ -13,9 +13,10 @@ GET         /byAttr               controllers.UserController.getUserByAttr(user:
 GET         /users/create         controllers.UserController.showCreateUserForm()
 POST        /users/create         controllers.UserController.createUser()
 
+POST        /upload               controllers.UserController.upload()
 
 GET         /user/edit/:id        controllers.UserController.showEditUserForm(id: Integer)
-POST         /user/edit            controllers.UserController.editUser()
+POST        /user/edit            controllers.UserController.editUser()
 
 GET         /age                  controllers.UserController.age(ageRange: controllers.AgeRange)
 

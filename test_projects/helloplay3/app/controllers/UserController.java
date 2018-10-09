@@ -4,12 +4,16 @@ package controllers;
 import play.Logger;
 import play.data.Form;
 import play.data.FormFactory;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import validation.userchecks.CreateUserCheck;
 import validation.userchecks.EditUserCheck;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -159,6 +163,13 @@ public class UserController extends Controller {
         String email = user.getEmails().get(0);
         Integer age = user.getAge();
         return ok(findUsers(username, email, age).toString());
+    }
+
+    public Result upload() throws IOException {
+        final Http.MultipartFormData<File> formData = request().body().asMultipartFormData();
+        final Http.MultipartFormData.FilePart<File> filePart = formData.getFile("file");
+        final File file = filePart.getFile();
+        return ok("file size = " + file.length() + " bytes");
     }
 
 }
