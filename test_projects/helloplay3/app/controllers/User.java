@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import validation.userchecks.LoginUserCheck;
 import play.mvc.QueryStringBindable;
 import validation.validators.CustomValidators;
 
+import javax.validation.Constraint;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,24 +23,26 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
     private Integer userId;
 
     @Constraints.Required(groups = {CreateUserCheck.class, LoginUserCheck.class})
-    @Constraints.MaxLength(value = 20, groups = {CreateUserCheck.class, EditUserCheck.class})
-    @CustomValidators.AllUpperCase(groups = {CreateUserCheck.class, EditUserCheck.class})
+    //@Constraints.MaxLength(value = 20, groups = {CreateUserCheck.class, EditUserCheck.class})
+    //@CustomValidators.AllUpperCase(groups = {CreateUserCheck.class, EditUserCheck.class})
     private String username;
 
-    @Constraints.Email
+    @Constraints.Email(groups = {CreateUserCheck.class,EditUserCheck.class, LoginUserCheck.class})
     private List<String> emails;
 
     @Constraints.Required(groups = {CreateUserCheck.class, LoginUserCheck.class})
-    @Constraints.MinLength(value = 3, groups = {CreateUserCheck.class, EditUserCheck.class})
+    //@Constraints.MinLength(value = 3, groups = {CreateUserCheck.class, EditUserCheck.class})
+    //@Constraints.ValidateWith(value = CustomValidators.AllUpperCaseValidator.class, groups = {CreateUserCheck.class, EditUserCheck.class})
     private String password;
 
 
-    @Constraints.Required(groups = {CreateUserCheck.class})
-    @Constraints.Min(value = 18, groups = {CreateUserCheck.class, EditUserCheck.class})
-    @Constraints.Max(value = 99, groups = {CreateUserCheck.class, EditUserCheck.class})
+    //@Constraints.Required(groups = {CreateUserCheck.class})
+    //@Constraints.Min(value = 18, groups = {CreateUserCheck.class, EditUserCheck.class})
+    //@Constraints.Max(value = 99, groups = {CreateUserCheck.class, EditUserCheck.class})
     private Integer age;
 
     private Boolean admin;
+
 
     @Override
     public String toString() {
@@ -50,7 +54,7 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
 
         List<ValidationError> errors = new ArrayList<>();
 
-        if (username.equals("admin") && !admin)
+        if (username.equals("admin") && admin == null)
             errors.add(new ValidationError("username", "username darf nicht admin sein"));
 
         if (password.equals(username))

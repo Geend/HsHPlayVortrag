@@ -2,6 +2,7 @@ package controllers;
 
 
 import play.Logger;
+import play.data.DynamicForm;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.BodyParser;
@@ -60,12 +61,14 @@ public class UserController extends Controller {
 
 
 
+    private final Form<User> userForm;
 
     private final Form<User> createFrom;
     private final Form<User> editForm;
 
     @Inject
     public UserController(FormFactory formFactory) {
+        this.userForm = formFactory.form(User.class);
         this.createFrom = formFactory.form(User.class, CreateUserCheck.class);
         this.editForm = formFactory.form(User.class, EditUserCheck.class);
 
@@ -76,7 +79,9 @@ public class UserController extends Controller {
         return redirect(controllers.routes.UserController.getUsers());
     }
 
-
+    //-------------------------
+    //------- Shows Users ------
+    //-------------------------
     public Result getUsers() {
         return ok(users.toString());
     }
@@ -92,6 +97,10 @@ public class UserController extends Controller {
 
     }
 
+
+    //-------------------------
+    //------ Create Users -----
+    //-------------------------
     public Result showCreateUserForm() {
         return ok(views.html.create_user.render(createFrom));
 
@@ -109,9 +118,13 @@ public class UserController extends Controller {
         newUser.setUserId(users.size());
         users.add(newUser);
 
-        return ok("New user:  " + newUser.toString());
+        return ok("New user: " + newUser.toString());
     }
 
+
+    //-------------------------
+    //------- Edit Users ------
+    //-------------------------
     public Result showEditUserForm(Integer userId) {
 
         Optional<User> user = findUser(userId);
@@ -125,7 +138,6 @@ public class UserController extends Controller {
     public Result editUser() {
 
         Form<User> boundForm = editForm.bindFromRequest("userId", "username", "password", "emails", "age","admin");
-
 
         if(boundForm.hasErrors()){
             return ok(views.html.edit_user.render(boundForm));
@@ -145,6 +157,10 @@ public class UserController extends Controller {
         }
     }
 
+
+    //-------------------------
+    //--- Data Binding Demo ---
+    //-------------------------
     public Result age(AgeRange ageRange){
        List<User> userList = users.stream().filter(u -> u.getAge().compareTo(ageRange.from) >= 0 &&
                 u.getAge().compareTo(ageRange.to) <= 0).collect(Collectors.toList());

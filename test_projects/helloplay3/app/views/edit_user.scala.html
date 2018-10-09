@@ -14,8 +14,9 @@
         @helper.CSRF.formField
         @helper.inputText(form("username"))
         @helper.repeat(form("emails"), min = 1) { emailField =>
+            @helper.inputText(emailField)}
 
-            @helper.inputText(emailField)}        @helper.inputText(form("age"))
+        @helper.inputText(form("age"))
         @helper.inputPassword(form("password"))
         @helper.checkbox(form("admin"))
 
