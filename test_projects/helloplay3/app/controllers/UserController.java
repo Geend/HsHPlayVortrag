@@ -181,6 +181,7 @@ public class UserController extends Controller {
         return ok(findUsers(username, email, age).toString());
     }
 
+//    @BodyParser.Of(BodyParser.MultipartFormData.class)
     public Result upload() throws IOException {
         final Http.MultipartFormData<File> formData = request().body().asMultipartFormData();
         final Http.MultipartFormData.FilePart<File> filePart = formData.getFile("file");
