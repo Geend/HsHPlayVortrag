@@ -1,20 +1,18 @@
 package controllers;
 
 
-import controllers.routes;
 import play.Logger;
 import play.data.Form;
 import play.data.FormFactory;
 import play.mvc.Controller;
 import play.mvc.Result;
-import validation.CreateUserCheck;
-import validation.EditUserCheck;
+import validation.userchecks.CreateUserCheck;
+import validation.userchecks.EditUserCheck;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -122,7 +120,7 @@ public class UserController extends Controller {
 
     public Result editUser() {
 
-        Form<User> boundForm = editForm.bindFromRequest("userId", "username", "password", "email", "age");
+        Form<User> boundForm = editForm.bindFromRequest("userId", "username", "password", "emails", "age","admin");
 
 
         if(boundForm.hasErrors()){

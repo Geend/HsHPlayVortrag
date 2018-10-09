@@ -1,16 +1,15 @@
 package controllers;
 
-import play.mvc.PathBindable;
-
 import java.util.Map;
 import java.util.Optional;
 
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import validation.CreateUserCheck;
-import validation.EditUserCheck;
-import validation.LoginUserCheck;
+import validation.userchecks.CreateUserCheck;
+import validation.userchecks.EditUserCheck;
+import validation.userchecks.LoginUserCheck;
 import play.mvc.QueryStringBindable;
+import validation.validators.CustomValidators;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +21,15 @@ public class User implements Constraints.Validatable<List<ValidationError>>, Que
     private Integer userId;
 
     @Constraints.Required(groups = {CreateUserCheck.class, LoginUserCheck.class})
-    @Constraints.MaxLength(20)
+    @Constraints.MaxLength(value = 20, groups = {CreateUserCheck.class, EditUserCheck.class})
+    @CustomValidators.AllUpperCase(groups = {CreateUserCheck.class, EditUserCheck.class})
     private String username;
 
     @Constraints.Email
     private List<String> emails;
 
     @Constraints.Required(groups = {CreateUserCheck.class, LoginUserCheck.class})
-    @Constraints.MinLength(3)
+    @Constraints.MinLength(value = 3, groups = {CreateUserCheck.class, EditUserCheck.class})
     private String password;
 
 

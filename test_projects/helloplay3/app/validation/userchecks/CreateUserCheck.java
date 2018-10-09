@@ -1,4 +1,4 @@
-package validation;
+package validation.userchecks;
 
 public interface CreateUserCheck {
 }
